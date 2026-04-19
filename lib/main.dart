@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:io';
 
 void main() {
   runApp(const MyApp());
+  if (Platform.isAndroid) {
+    WebView.platform = AndroidWebView();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -112,7 +116,7 @@ class _MessengerWebViewState extends State<MessengerWebView> {
           onWebResourceError: (WebResourceError error) {
             setState(() {
               hasError = true;
-              errorMessage = 'Ошибка: ${error.description}';
+              errorMessage = 'Ошибка загрузки. Проверь интернет.';
               isLoading = false;
             });
           },
@@ -149,9 +153,9 @@ class _MessengerWebViewState extends State<MessengerWebView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.error_outline,
+                        Icons.wifi_off,
                         size: 64,
-                        color: Colors.red,
+                        color: Colors.orange,
                       ),
                       const SizedBox(height: 16),
                       Text(
