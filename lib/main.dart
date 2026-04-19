@@ -94,7 +94,7 @@ class _MessengerWebViewState extends State<MessengerWebView> {
   bool hasError = false;
   String errorMessage = '';
 
-  static const String serverUrl = 'https://telegram-clone-production-bfa3.up.railway.app';
+  static const String serverUrl = 'http://telegram-clone-production-bfa3.up.railway.app';
 
   @override
   void initState() {
