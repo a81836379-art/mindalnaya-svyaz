@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:io';
 
 void main() {
   runApp(const MyApp());
+  if (Platform.isAndroid) {
+    WebView.platform = SurfaceAndroidWebView();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -92,18 +96,24 @@ class _MessengerWebViewState extends State<MessengerWebView> {
   late final WebViewController controller;
   bool isLoading = true;
   bool hasError = false;
-  String errorMessage = '';
 
   static const String serverUrl = 'http://telegram-clone-production-bfa3.up.railway.app';
 
   @override
   void initState() {
     super.initState();
+    
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF0f0f0f))
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (String url) {
+            setState(() {
+              isLoading = true;
+              hasError = false;
+            });
+          },
           onPageFinished: (String url) {
             setState(() {
               isLoading = false;
@@ -112,7 +122,6 @@ class _MessengerWebViewState extends State<MessengerWebView> {
           onWebResourceError: (WebResourceError error) {
             setState(() {
               hasError = true;
-              errorMessage = 'Ошибка загрузки. Проверь интернет.';
               isLoading = false;
             });
           },
@@ -149,15 +158,19 @@ class _MessengerWebViewState extends State<MessengerWebView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Icons.wifi_off,
+                        Icons.cloud_off,
                         size: 64,
                         color: Colors.orange,
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        errorMessage,
-                        style: const TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
+                      const Text(
+                        'Не удалось подключиться к серверу',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Проверь интернет-соединение',
+                        style: TextStyle(color: Colors.grey),
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(
@@ -166,7 +179,7 @@ class _MessengerWebViewState extends State<MessengerWebView> {
                             hasError = false;
                             isLoading = true;
                           });
-                          controller.reload();
+                          controller.loadRequest(Uri.parse(serverUrl));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF8774e1),
