@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'dart:io';
 
 void main() {
   runApp(const MyApp());
-  if (Platform.isAndroid) {
-    WebView.platform = AndroidWebView();
-  }
 }
 
 class MyApp extends StatelessWidget {
